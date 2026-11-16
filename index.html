@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Central Bank Pensioners - Life Certificate Status (FY 2026-27)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: #f4f7f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      background: #ffffff;
+      padding: 30px 25px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+    }
+    h2 {
+      color: #1a365d;
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+    p.subtitle {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus {
+      border-color: #2563eb;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+    button:disabled {
+      background-color: #94a3b8;
+      cursor: not-allowed;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: none;
+    }
+    .status-success {
+      background-color: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+    .status-danger {
+      background-color: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Central Bank Pensioners</h2>
+    <p class="subtitle">Life Certificate Status Check (FY 2026-27)</p>
+
+    <div class="form-group">
+      <label for="empId">Employee ID</label>
+      <input type="text" id="empId" placeholder="Enter Employee ID" autocomplete="off">
+    </div>
+
+    <button id="searchBtn" onclick="checkStatus()">Check Status</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    async function checkStatus() {
+      const empIdInput = document.getElementById("empId");
+      const empId = empIdInput.value.trim().toLowerCase();
+      const resultDiv = document.getElementById("result");
+      const btn = document.getElementById("searchBtn");
+
+      if (!empId) {
+        alert("Please enter a valid Employee ID.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "Checking...";
+      resultDiv.style.display = "none";
+
+      try {
+        // Fetch JSON data stored directly in your GitHub repo
+        const response = await fetch('data.json');
+        if (!response.ok) throw new Error("Could not load data file");
+        
+        const validEmpIds = await response.json();
+        
+        // Normalize IDs to lower-case string for matching
+        const isPresent = validEmpIds.some(id => String(id).trim().toLowerCase() === empId);
+
+        resultDiv.style.display = "block";
+        if (isPresent) {
+          resultDiv.className = "status-success";
+          resultDiv.innerText = "Life certificate received for FY 2026-27";
+        } else {
+          resultDiv.className = "status-danger";
+          resultDiv.innerText = "Life certificate not submitted for FY 2026-27";
+        }
+      } catch (error) {
+        resultDiv.style.display = "block";
+        resultDiv.className = "status-danger";
+        resultDiv.innerText = "Error loading pensioner database. Please try again later.";
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Check Status";
+      }
+    }
+  </script>
+
+</body>
+</html>
